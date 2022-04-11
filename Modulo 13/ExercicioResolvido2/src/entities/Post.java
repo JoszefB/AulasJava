@@ -18,7 +18,7 @@ public class Post {
 	
 	public Post() {
 		sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		comments = new ArrayList();
+		comments = new ArrayList<>();
 	}
 	
 	public Post(Date moment, String title, String content, Integer likes) {
@@ -27,7 +27,7 @@ public class Post {
 		setContent(content);
 		setLikes(likes);
 		sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		comments = new ArrayList();
+		comments = new ArrayList<>();
 	}
 
 	public static SimpleDateFormat getSdf() {
