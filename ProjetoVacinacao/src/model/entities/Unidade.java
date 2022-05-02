@@ -1,25 +1,35 @@
 package model.entities;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Unidade {
 	
+	private Integer idUnidade;
 	private String nome;
 	private Endereco endereco;
-	private List<Vacina> vacinas = new ArrayList<>();
+	private Centro centro;
 	
 	public Unidade () {}
 	
-	public Unidade(String nome, Endereco endereco) {
+	public Unidade(String nome, Endereco endereco, Centro centro) {
 		setNome(nome);
 		setEndereco(endereco);
+		setCentro(centro);
 	}
-	
-	public Unidade(String nome, Endereco endereco, Vacina vacinas) {
-		setNome(nome);
-		setEndereco(endereco);
-		addVacina(vacinas);
+
+	public Integer getIdUnidade() {
+		return idUnidade;
+	}
+
+	public void setIdUnidade(Integer idUnidade) {
+		this.idUnidade = idUnidade;
+	}
+
+	public Centro getCentro() {
+		return centro;
+	}
+
+	public void setCentro(Centro centro) {
+		this.centro = centro;
 	}
 
 	public String getNome() {
@@ -38,23 +48,11 @@ public class Unidade {
 		this.endereco = endereco;
 	}
 
-	public List<Vacina> getVacinas() {
-		return vacinas;
-	}
-	
-	public void addVacina(Vacina vac) {
-		vacinas.add(vac);
-	}
-	
-	public void removeVacina(Vacina vac) {
-		vacinas.remove(vac);
-	}
-
 	@Override
 	public String toString() {
 		return "Unidade: "+
 				"\nNome:"+getNome()+
-				"\n"+getEndereco()+
-				"\n"+getVacinas();
+				"\nCentro:"+getCentro()+
+				"\n"+getEndereco();
 	}
 }

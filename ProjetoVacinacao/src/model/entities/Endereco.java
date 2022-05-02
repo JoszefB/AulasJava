@@ -2,6 +2,7 @@ package model.entities;
 
 public class Endereco {
 	
+	private Integer idEndereco;
 	private String cep;
 	private String pais;
 	private String estado;
@@ -34,6 +35,14 @@ public class Endereco {
 		setRua(rua);
 		setNumero(numero);
 		setComplemento(complemento);
+	}
+	
+	public Integer getIdEndereco() {
+		return idEndereco;
+	}
+
+	public void setIdEndereco(Integer idEndereco) {
+		this.idEndereco = idEndereco;
 	}
 
 	public String getCep() {

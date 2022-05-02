@@ -3,21 +3,19 @@ package model.entities;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Vacina {
-
+public class Lote {
+	
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private Integer lote;
 	private Date vencimento;
-	private Integer quantidade;
 	
-	public Vacina() {
+	public Lote() {
 	}
 
-	public Vacina(Integer lote, Date vencimento, Integer quantidade) {
+	public Lote(Integer lote, Date vencimento) {
 		setLote(lote);
 		setVencimento(vencimento);
-		setQuantidade(quantidade);
 	}
 
 	public Integer getLote() {
@@ -35,20 +33,11 @@ public class Vacina {
 	public void setVencimento(Date vencimento) {
 		this.vencimento = vencimento;
 	}
-
-	public Integer getQuantidade() {
-		return quantidade;
-	}
-
-	public void setQuantidade(Integer quantidade) {
-		this.quantidade = quantidade;
-	}
-
+	
 	@Override
 	public String toString() {
 		return "Vacina :"+
 				"\nLote:"+getLote()+
-				"\nValido até: "+sdf.format(getVencimento())+
-				"\nQuantidade: "+getQuantidade();
+				"\nValido até: "+sdf.format(getVencimento());
 	}
 }
