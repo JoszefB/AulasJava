@@ -1,11 +1,5 @@
 /* projeto_vacinacao_modelo_logico: */
 
-drop database ProjetoVacina;
-
-create database ProjetoVacina;
-
-use ProjetoVacina;
-
 CREATE TABLE unidade (
     idUnidade int auto_increment PRIMARY KEY,
     nome varchar(20) not null,
