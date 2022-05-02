@@ -1,4 +1,4 @@
-package model.dao;
+package controller;
 
 public class ExceptionCustomized extends RuntimeException {
 
