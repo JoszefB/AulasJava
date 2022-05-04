@@ -60,6 +60,40 @@ public class EnderecoDaoJDBC implements EnderecoDao {
 			DB.closeStatement(st);
 		}
 	}
+	
+	@Override
+	public Endereco fyndById(int id) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM endereco WHERE idEndereco = ?");
+			st.setInt(1, id);
+			rs = st.executeQuery();
+			Endereco obj = instantiateEndereco(rs);
+			return obj;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
+	
+	private Endereco instantiateEndereco(ResultSet rs) throws SQLException {
+		Endereco end = new Endereco();
+		end.setIdEndereco(rs.getInt("idEndereco"));
+		end.setCep(rs.getString("cep"));
+		end.setPais(rs.getString("pais"));
+		end.setEstado(rs.getString("estado"));
+		end.setCidade(rs.getString("cidade"));
+		end.setBairro(rs.getString("bairro"));
+		end.setRua(rs.getString("rua"));
+		end.setNumero(rs.getInt("numero"));
+		end.setComplemento(rs.getString("complemento"));
+		return end;
+	}
 
 	@Override
 	public List<Endereco> listAll() {
@@ -72,17 +106,8 @@ public class EnderecoDaoJDBC implements EnderecoDao {
 			List<Endereco> list = new ArrayList<Endereco>();
 			
 			while (rs.next()) {
-				Endereco end = new Endereco();
-				end.setIdEndereco(rs.getInt("idEndereco"));
-				end.setCep(rs.getString("cep"));
-				end.setPais(rs.getString("pais"));
-				end.setEstado(rs.getString("estado"));
-				end.setCidade(rs.getString("cidade"));
-				end.setBairro(rs.getString("bairro"));
-				end.setRua(rs.getString("rua"));
-				end.setNumero(rs.getInt("numero"));
-				end.setComplemento(rs.getString("complemento"));
-				list.add(end);
+				Endereco obj = instantiateEndereco(rs);
+				list.add(obj);
 			}
 			
 			return list;
@@ -109,17 +134,8 @@ public class EnderecoDaoJDBC implements EnderecoDao {
 			List<Endereco> list = new ArrayList<Endereco>();
 			
 			while (rs.next()) {
-				Endereco end = new Endereco();
-				end.setIdEndereco(rs.getInt("idEndereco"));
-				end.setCep(rs.getString("cep"));
-				end.setPais(rs.getString("pais"));
-				end.setEstado(rs.getString("estado"));
-				end.setCidade(rs.getString("cidade"));
-				end.setBairro(rs.getString("bairro"));
-				end.setRua(rs.getString("rua"));
-				end.setNumero(rs.getInt("numero"));
-				end.setComplemento(rs.getString("complemento"));
-				list.add(end);
+				Endereco obj = instantiateEndereco(rs);
+				list.add(obj);
 			}
 			
 			return list;
@@ -146,17 +162,8 @@ public class EnderecoDaoJDBC implements EnderecoDao {
 			List<Endereco> list = new ArrayList<Endereco>();
 			
 			while (rs.next()) {
-				Endereco end = new Endereco();
-				end.setIdEndereco(rs.getInt("idEndereco"));
-				end.setCep(rs.getString("cep"));
-				end.setPais(rs.getString("pais"));
-				end.setEstado(rs.getString("estado"));
-				end.setCidade(rs.getString("cidade"));
-				end.setBairro(rs.getString("bairro"));
-				end.setRua(rs.getString("rua"));
-				end.setNumero(rs.getInt("numero"));
-				end.setComplemento(rs.getString("complemento"));
-				list.add(end);
+				Endereco obj = instantiateEndereco(rs);
+				list.add(obj);
 			}
 			
 			return list;

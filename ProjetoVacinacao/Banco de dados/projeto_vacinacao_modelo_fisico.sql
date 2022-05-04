@@ -9,8 +9,8 @@ use ProjetoVacina;
 CREATE TABLE unidade (
     idUnidade int auto_increment PRIMARY KEY,
     nome varchar(20) not null,
-    centro enum('sim','n„o') default 'n„o',
-    fk_endereco_idEndereco int
+    centro enum('sim','n√£o') default 'n√£o',
+    fk_idEndereco int
 );
 
 CREATE TABLE pessoa (
