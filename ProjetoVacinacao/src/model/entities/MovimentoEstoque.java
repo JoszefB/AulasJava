@@ -14,6 +14,8 @@ public class MovimentoEstoque {
 	private TipoTransacao tipoTransacao;
 	private Integer quantidade;
 	private Date dataMovimentacao;
+	
+	public MovimentoEstoque() {}
 
 	public MovimentoEstoque(SimpleDateFormat sdf, Integer sequencia, Unidade unidade, Lote lote, Pessoa pessoa,
 			TipoTransacao tipoTransacao, Integer quantidade, Date dataMovimentacao) {
