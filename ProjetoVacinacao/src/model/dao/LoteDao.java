@@ -7,7 +7,8 @@ import model.entities.Lote;
 public interface LoteDao {
 
 	public void insert(Lote lote);
+	public Lote fyndById(int id);
 	public List<Lote> listAll();
-	public Lote findByLote();
+	public List<Lote> listByVencimento();
 	
 }
