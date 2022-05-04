@@ -6,6 +6,8 @@ public class Estoque {
 	private Lote lote;
 	private Integer quantidade;
 	
+	public Estoque() {}
+	
 	public Estoque(Unidade unidade, Lote lote, Integer quantidade) {
 		setUnidade(unidade);
 		setLote(lote);
