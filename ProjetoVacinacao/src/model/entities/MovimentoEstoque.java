@@ -17,9 +17,8 @@ public class MovimentoEstoque {
 	
 	public MovimentoEstoque() {}
 
-	public MovimentoEstoque(SimpleDateFormat sdf, Integer sequencia, Unidade unidade, Lote lote, Pessoa pessoa,
+	public MovimentoEstoque(Integer sequencia, Unidade unidade, Lote lote, Pessoa pessoa,
 			TipoTransacao tipoTransacao, Integer quantidade, Date dataMovimentacao) {
-		this.sdf = sdf;
 		this.sequencia = sequencia;
 		this.unidade = unidade;
 		this.lote = lote;
