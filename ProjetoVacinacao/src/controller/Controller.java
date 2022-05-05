@@ -386,7 +386,9 @@ public class Controller {
 	}
 	
 	public void pessoaInsert() {
-		pessoa.insert(criarPessoa());
+		Pessoa pes = criarPessoa();
+		endereco.insert(pes.getEndereco());
+		pessoa.insert(pes);
 	}
 	
 	public void pessoaList() {
@@ -397,7 +399,9 @@ public class Controller {
 	}
 	
 	public void unidadeInsert() {
-		unidade.insert(criarUnidade());
+		Unidade uni = criarUnidade();
+		endereco.insert(uni.getEndereco());
+		unidade.insert(uni);
 	}
 	
 	public void unidadeList() {
