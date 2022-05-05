@@ -214,10 +214,8 @@ public class Controller {
 		} 
 	}
 	
-	public void criarMovimento() {
+	public void criarMovimento(String resp) {
 		try {
-			System.out.print("Informe o tipo de movimentoção (rec - recebimento / tra - transdefrencia / apl - aplicação):");
-			String resp = kb.next();
 			if(resp.equals("rec")) {
 				recebimento();
 			}
@@ -385,5 +383,54 @@ public class Controller {
 		catch(RuntimeException e) {
 			throw new ExceptionCustomized(e.getMessage());
 		} 
+	}
+	
+	public void pessoaInsert() {
+		pessoa.insert(criarPessoa());
+	}
+	
+	public void pessoaList() {
+		List<Pessoa> pessoas = pessoa.listAll();
+		for(Pessoa p : pessoas) {
+			System.out.println(p);
+		}
+	}
+	
+	public void unidadeInsert() {
+		unidade.insert(criarUnidade());
+	}
+	
+	public void unidadeList() {
+		List<Unidade> unidades = unidade.listAll();
+		for(Unidade u : unidades) {
+			System.out.println(u);
+		}
+	}
+	
+	public void loteInsert() {
+		lote.insert(criarLote());
+	}
+	
+	public void loteList() {
+		List<Lote> lotes = lote.listAll();
+		for(Lote l : lotes) {
+			System.out.println(l);
+		}
+	}
+	
+	public void relatorioEstoque() {
+		
+	}
+	
+	public void relatorioApliacao() {
+		
+	}
+	
+	public void relatorioResumoAplicacao() {
+		
+	}
+	
+	public void relatorioEsquemaIncompleto() {
+		
 	}
 }
