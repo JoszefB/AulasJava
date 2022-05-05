@@ -201,7 +201,7 @@ public class EstoqueDaoJDBC implements EstoqueDao{
 	}
 
 	@Override
-	public void Update(Estoque estoque) {
+	public void update(Estoque estoque) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(

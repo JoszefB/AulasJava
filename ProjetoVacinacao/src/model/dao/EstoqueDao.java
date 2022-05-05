@@ -10,6 +10,6 @@ public interface EstoqueDao {
 	public List<Estoque> fyndByLote (int lote);
 	public List<Estoque> fyndByUnidade (int idUnidade);
 	public List<Estoque> listAll();
-	public void Update(Estoque estoque);
+	public void update(Estoque estoque);
 	
 }
