@@ -46,20 +46,16 @@ public class Controller {
 	}
 	
 	private Endereco criarEndereco() {
-		Endereco end = new Endereco();
+		Endereco end;
 		try {
 			System.out.print("Informe a cidade: ");
-			kb.nextLine();
 			String cidade = kb.nextLine();
-			if(cidade.equals("São Leopoldo")) {
+			if(cidade.equalsIgnoreCase("São Leopoldo")) {
 				System.out.print("Informe o CEP: ");
-				kb.nextLine();
 				String cep = kb.nextLine();
 				System.out.print("Informe o Bairro: ");
-				kb.nextLine();
 				String bairro = kb.nextLine();
 				System.out.print("Informe a rua: ");
-				kb.nextLine();
 				String rua = kb.nextLine();
 				System.out.print("Informe o numero: ");
 				int numero = kb.nextInt();
@@ -70,19 +66,14 @@ public class Controller {
 			}
 			else {
 				System.out.print("Informe o CEP: ");
-				kb.nextLine();
 				String cep = kb.nextLine();
 				System.out.print("Informe o pais: ");
-				kb.nextLine();
 				String pais = kb.nextLine();
 				System.out.print("Informe o estado: ");
-				kb.nextLine();
 				String estado = kb.nextLine();
 				System.out.print("Informe o Bairro: ");
-				kb.nextLine();
 				String bairro = kb.nextLine();
 				System.out.print("Informe a rua: ");
-				kb.nextLine();
 				String rua = kb.nextLine();
 				System.out.print("Informe o numero: ");
 				int numero = kb.nextInt();
@@ -102,10 +93,11 @@ public class Controller {
 		Pessoa pessoa;
 		try {
 			System.out.print("Informe o nome: ");
-			kb.nextLine();
 			String nome = kb.nextLine();
+			kb.nextLine();
 			System.out.print("Informe o cpf: ");
-			String cpf = kb.next();
+			String cpf = kb.nextLine();
+			kb.nextLine();
 			Endereco end = criarEndereco();
 			pessoa = new Pessoa(nome, cpf, end);
 			return pessoa;
@@ -118,21 +110,25 @@ public class Controller {
 	private Unidade criarUnidade() {
 		Unidade uni = new Unidade();
 		try {
-			System.out.print("Deseja criar um centro de distribuição: (Sim/Não) ");
-			String resposta = kb.next();
-			if(resposta.equals("Sim")) {
+			System.out.print("Deseja criar um centro de distribuição: (S - sim /N - Não) ");
+			char resposta = kb.next().charAt(0);
+			if(resposta == 'S') {
 				List<Unidade> all = unidade.listAll();
+				boolean existCentro = false;
 				for(Unidade unidade : all) {
 					if (unidade.getCentro() == Centro.SIM) {
-						System.out.println("Só pode haver um centro de distribuição");
+						existCentro = true;
 					}
-					else {
-						System.out.print("Informe o nome: ");
-						kb.nextLine();
-						String nome = kb.nextLine();
-						Endereco end = criarEndereco();
-						uni = new Unidade(nome, end, Centro.SIM);
-					}
+				}
+				if(existCentro == true) {
+					System.out.println("Só pode haver um centro de distribuição");
+				}
+				else {
+					System.out.print("Informe o nome: ");
+					kb.nextLine();
+					String nome = kb.nextLine();
+					Endereco end = criarEndereco();
+					uni = new Unidade(nome, end, Centro.SIM);
 				}
 			}
 			else {
@@ -155,6 +151,7 @@ public class Controller {
 			System.out.print("Informe o lote: ");
 			int l = kb.nextInt();
 			System.out.print("Informe a data de validade (dd/MM/yyyy): ");
+			kb.nextLine();
 			Date validade = sdf.parse(kb.next());
 			lote = new Lote(l, validade);
 			return lote;
@@ -259,7 +256,16 @@ public class Controller {
 		}
 		if(centro != null) {
 			Estoque est = new Estoque(centro, l, quantidade);
+			MovimentoEstoque me = new MovimentoEstoque();
+			me.setSequencia(1);
+			me.setUnidade(centro);
+			me.setLote(l);
+			me.setTipoTransacao(TipoTransacao.REC);
+			me.setQuantidade(est.getQuantidade());
+			me.setDataMovimentacao(new Date());
+			mestoque.insert(me);
 			estoque.insert(est);
+			System.out.println("Digite qualquer coisa para continuar.");
 		}
 		else {
 			System.out.println("Unico que pode receber um novo lote é o centro de distribuição");
@@ -269,73 +275,89 @@ public class Controller {
 	private void transferencia() {
 		try {
 			System.out.print("Informe a unidade de origem da transferencia: ");
-			String unidadeOrigem = kb.next();
+			String unidadeOrigem = kb.nextLine();
+			kb.nextLine();
+			Unidade unidadeDeOrigem = null;
 			List<Unidade> unidades = unidade.listAll();
-			boolean origem = false;
-			boolean destino = false;
-			Unidade unidadeDeDestino = null;
 			for(Unidade unidade : unidades) {
-				if(unidade.getNome().equals(unidadeOrigem) && unidade.getCentro() == Centro.SIM) {
-					origem = true;
+				if(unidade.getNome().equals(unidadeOrigem)) {
+					unidadeDeOrigem = unidade;
 				}
 			}
-			if(origem == true) {
+			if(unidadeDeOrigem != null) {
 				System.out.print("Informe a unidade de destino da transferencia: ");
-				String unidadeDestino = kb.next();
+				String unidadeDstino = kb.nextLine();
+				kb.nextLine();
+				Unidade unidadeDeDestino = null;
 				for(Unidade unidade : unidades) {
-					if(unidade.getNome().equals(unidadeDestino)) {
-						destino = true;
-						unidadeDeDestino = unidade;
+					if(unidade.getNome().equals(unidadeDstino)) {
+						unidadeDeDestino  = unidade;
 					}
 				}
-				if(destino != true) {
-					unidadeDeDestino = criarUnidade();
-				}
-				else {
-					System.out.print("Informe o lote a ser transferido");
+				if(unidadeDeDestino != null) {
+					System.out.print("Informe o lote: ");
 					int idLote = kb.nextInt();
 					List<Lote> lotes = lote.listAll();
-					Lote l;
-					boolean loteExist = false;
-					for(Lote lote : lotes) {
-						if(lote.getLote() == idLote) {
-							loteExist = true;
+					Lote l = null;
+					for(Lote lot : lotes) {
+						if(lot.getLote() == idLote) {
+							l = lot;
 						}
 					}
-					if(loteExist == true) {
-						l = lote.fyndById(idLote);
-						System.out.print("Informe a quantide a ser transferida");
-						int quantidade = kb.nextInt();
-						List<Estoque> estoques = estoque.fyndByLote(idLote);
-						Estoque est = null;
-						for (Estoque e : estoques) {
-							if(e.getUnidade().getIdUnidade() == unidadeDeDestino.getIdUnidade()) {
-								est = e;
+					if(l != null) {
+						System.out.println("Informe a quantidade a ser movida: ");
+						int quantidade =kb.nextInt();
+						if((unidadeDeOrigem.getCentro() == Centro.SIM && unidadeDeDestino.getCentro() == Centro.NAO) || (unidadeDeOrigem.getCentro() == Centro.NAO && unidadeDeDestino.getCentro() == Centro.SIM)) {
+							List<Estoque> estoques = estoque.listAll();
+							Estoque est = null;
+							for(Estoque e : estoques) {
+								if(e.getLote().getLote() == l.getLote()) {
+									if(unidadeDeOrigem.getIdUnidade() == e.getUnidade().getIdUnidade()) {
+										est = e;
+									}
+								}
+							}
+							
+							if(est != null || est.getQuantidade() >= 0) {
+								List<MovimentoEstoque> lista = mestoque.listAll();
+								MovimentoEstoque movimentoDeOrigem = new MovimentoEstoque(1, unidadeDeOrigem, l, null, TipoTransacao.TRA, est.getQuantidade()-quantidade, new Date());
+								MovimentoEstoque movimentoDeDestino = new MovimentoEstoque(1, unidadeDeDestino, l, null, TipoTransacao.REC, quantidade, new Date());
+								for (MovimentoEstoque move : lista) {
+									if(move.getSequencia() == movimentoDeOrigem.getSequencia()) {
+										if(move.getLote().getLote() == movimentoDeOrigem.getLote().getLote()) {
+											if(move.getUnidade().getIdUnidade() == movimentoDeOrigem.getUnidade().getIdUnidade()) {
+												movimentoDeOrigem.setSequencia(movimentoDeOrigem.getSequencia()+1);
+											}
+										}
+									}
+									else if(move.getSequencia() == movimentoDeDestino.getSequencia()) {
+										if(move.getLote().getLote() == movimentoDeDestino.getLote().getLote()) {
+											if(move.getUnidade().getIdUnidade() == movimentoDeDestino.getUnidade().getIdUnidade()) {
+												movimentoDeDestino.setSequencia(movimentoDeDestino.getSequencia()+1);
+											}
+										}
+									}
+								}
+								mestoque.transacao(movimentoDeOrigem, movimentoDeDestino);
+							}
+							else {
+								System.out.println("Operação impossivel de ser realizada.");
 							}
 						}
-						if(est != null) {
-							if((quantidade > 0)&&(quantidade <= est.getQuantidade())) {
-								Estoque upEst = new Estoque(unidadeDeDestino, l, quantidade);
-								estoque.update(upEst);
-								MovimentoEstoque me = new MovimentoEstoque(1, upEst.getUnidade(), upEst.getLote(), null, TipoTransacao.TRA, 1, new Date());
-								if(mestoque.fyndByKey(me) == null) {
-									mestoque.insert(me);
-								}
-								else {
-									me = mestoque.fyndByKey(me);
-									me = new MovimentoEstoque(me.getSequencia()+1, upEst.getUnidade(), upEst.getLote(), null, TipoTransacao.TRA, 1, new Date());
-									mestoque.insert(me);
-								}
-							}
+						else {
+							System.out.println("Operação impossivel de ser realizada.");
 						}
 					}
 					else {
-						l = criarLote();
+						System.out.println("Operação impossivel de ser realizada.");
 					}
+				}
+				else {
+					System.out.println("Operação impossivel de ser realizada.");
 				}
 			}
 			else {
-				System.out.println("Somente o centro de distribuição pode enviar para outras unidades");
+				System.out.println("Operação impossivel de ser realizada.");
 			}
 		}
 		catch(RuntimeException e) {
@@ -362,21 +384,31 @@ public class Controller {
 					System.out.println("Centro de distribuição não pode realizar aplicação");
 				}
 			}
-			if(e == null) {
-				e = criarEstoque();
+			if(e == null || e.getQuantidade() <= 0) {
+				System.out.println("Não há estoque para aplicacão");
 			}
 			else {
 				e.setQuantidade(e.getQuantidade()-1);
 				MovimentoEstoque me = new MovimentoEstoque(1, e.getUnidade(), e.getLote(), p, TipoTransacao.APL, 1, new Date());
-				if(mestoque.fyndByKey(me) == null) {
+				List<MovimentoEstoque> list = mestoque.listAll();
+				MovimentoEstoque me2 = null;
+				int sequencia = 0;
+				for(MovimentoEstoque movimento : list) {
+					if(me.getLote().getLote() == movimento.getLote().getLote()) {
+						if(me.getUnidade().getIdUnidade() == movimento.getUnidade().getIdUnidade()) {
+							me2 = movimento;
+							sequencia = movimento.getSequencia() + 1;
+						}
+					}
+				}
+				if(me2 == null) {
 					estoque.update(e);
 					mestoque.insert(me);
 				}
 				else {
-					me = mestoque.fyndByKey(me);
-					me = new MovimentoEstoque(me.getSequencia()+1, e.getUnidade(), e.getLote(), p, TipoTransacao.APL, 1, new Date());
+					me2 = new MovimentoEstoque(sequencia, e.getUnidade(), e.getLote(), p, TipoTransacao.APL, 1, new Date());
 					estoque.update(e);
-					mestoque.insert(me);
+					mestoque.insert(me2);
 				}
 			}
 		}
@@ -423,11 +455,47 @@ public class Controller {
 	}
 	
 	public void relatorioEstoque() {
-		
+		System.out.print("Informe a unidade: ");
+		String nomeUnidade = kb.nextLine();
+		kb.nextLine();
+		Unidade unidadeRelatorio = null;
+		List<Unidade> unidades = unidade.listAll();
+		for(Unidade unidade : unidades) {
+			if(unidade.getNome().equals(nomeUnidade)) {
+				unidadeRelatorio = unidade;
+			}
+		}
+		if(unidadeRelatorio != null) {
+			List<Estoque> estoques = estoque.relatorioEstoque(unidadeRelatorio.getIdUnidade());
+			for(Estoque estoque : estoques) {
+				System.out.println(estoque);
+			}
+		}
+		else {
+			System.out.println("Unidade informada não existe");
+		}
 	}
 	
 	public void relatorioApliacao() {
-		
+		System.out.print("Informe a unidade: ");
+		String nomeUnidade = kb.nextLine();
+		kb.nextLine();
+		Unidade unidadeRelatorio = null;
+		List<Unidade> unidades = unidade.listAll();
+		for(Unidade unidade : unidades) {
+			if(unidade.getNome().equals(nomeUnidade)) {
+				unidadeRelatorio = unidade;
+			}
+		}
+		if(unidadeRelatorio != null) {
+			List<MovimentoEstoque> relatorios = mestoque.relatorioApliacao(unidadeRelatorio.getIdUnidade());
+			for(MovimentoEstoque relatorio : relatorios) {
+				System.out.println(relatorio);
+			}
+		}
+		else {
+			System.out.println("Unidade informada não existe");
+		}
 	}
 	
 	public void relatorioResumoAplicacao() {

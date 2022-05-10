@@ -179,7 +179,7 @@ public class UI {
 				kb.next();
 				break;
 			case "2":
-				cont.loteInsert();
+				cont.loteList();
 				kb.next();
 				break;
 			case "0":

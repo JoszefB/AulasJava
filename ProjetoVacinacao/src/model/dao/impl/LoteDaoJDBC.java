@@ -32,6 +32,8 @@ public class LoteDaoJDBC implements LoteDao {
 					Statement.RETURN_GENERATED_KEYS);
 			st.setInt(1, lote.getLote());
 			st.setDate(2, new java.sql.Date(lote.getVencimento().getTime()));
+			
+			st.executeUpdate();
 	
 		}
 		catch(SQLException e) {
@@ -44,9 +46,10 @@ public class LoteDaoJDBC implements LoteDao {
 	}
 	
 	private Lote instantiateLote(ResultSet rs) throws SQLException {
-		Lote lote = new Lote();
-		lote.setLote(rs.getInt("lote"));
-		lote.setVencimento(rs.getDate("data_validade"));
+		//Lote lote = new Lote();
+		//lote.setLote(rs.getInt("lote"));
+		//lote.setVencimento(rs.getDate("data_validade"));
+		Lote lote = new Lote(rs.getInt("lote"), rs.getDate("data_validade"));
 		return lote;
 	}
 
@@ -55,11 +58,14 @@ public class LoteDaoJDBC implements LoteDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT * FROM lote where lote = ?");
+			st = conn.prepareStatement("SELECT * FROM lote where lote.lote = ?");
 			st.setInt(1, id);
 			rs = st.executeQuery();
-			Lote lote = instantiateLote(rs);
-			return lote;
+			if (rs.next()) {
+				Lote lote = instantiateLote(rs);
+				return lote;
+			}
+			return null;
 		}
 		catch (SQLException e) {
 			throw new DbException(e.getMessage());

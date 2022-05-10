@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class UnidadeDaoJDBC implements UnidadeDao{
 			st = conn.prepareStatement("INSERT INTO unidade"+
 					"(nome, centro, fk_idEndereco)"+
 					"Values"+
-					"(?,?,?)");
+					"(?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, unidade.getNome());
 			if(unidade.getCentro() == Centro.SIM) {
 				st.setString(2, "sim");
@@ -80,7 +81,7 @@ public class UnidadeDaoJDBC implements UnidadeDao{
 		Unidade uni = new Unidade();
 		uni.setIdUnidade(rs.getInt("idUnidade"));
 		uni.setNome(rs.getString("nome"));
-		if(rs.getString("centro") == "sim") {
+		if(rs.getString("centro").equals("sim")) {
 			uni.setCentro(Centro.SIM);
 		}
 		else {
