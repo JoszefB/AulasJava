@@ -55,15 +55,15 @@ public class EstoqueDaoJDBC implements EstoqueDao{
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT unidade.idUnidade, unidade.nome, unidade.centro, unidade.fk_idEndereco, "
-					+ "endereco.idEndereco, endereco.cidade, endereco.bairro, endereco.numero, endereco.rua, endereco.cep, endereco.pais, endereco.estado, endereco.complemento, "
-					+ "lote.lote, lote.data_validade, "
-					+ "estoque.quantidade, estoque.fk_idUnidade, estoque.fk_lote "
-					+ "FROM estoque, lote, unidade, endereco "
-					+ "WHERE"
-					+ "estoque.fk_lote = lote.lote AND "
-					+ "estoque.fk_idUnidade = unidade.idUnidade AND "
-					+ "endereco.idEndereco = unidade.fk_idEndereco;");
+					"SELECT unidade.idUnidade, unidade.nome, unidade.centro, unidade.fk_idEndereco,"
+					+ " endereco.idEndereco, endereco.cidade, endereco.bairro, endereco.numero, endereco.rua, endereco.cep, endereco.pais, endereco.estado, endereco.complemento, "
+					+ " lote.lote, lote.data_validade, "
+					+ " estoque.quantidade, estoque.fk_idUnidade, estoque.fk_lote "
+					+ " FROM estoque, lote, unidade, endereco "
+					+ " WHERE "
+					+ " estoque.fk_lote = lote.lote AND "
+					+ " estoque.fk_idUnidade = unidade.idUnidade AND "
+					+ " endereco.idEndereco = unidade.fk_idEndereco;");
 			rs = st.executeQuery();
 			
 			List<Estoque> estoques = new ArrayList<Estoque>();
@@ -132,14 +132,12 @@ public class EstoqueDaoJDBC implements EstoqueDao{
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-					"UPDATE estoque "
-					+ "SET fk_idUnidade = ?, fk_lote = ?, quantidade = ?"
-					+ "WHERE fk_idUnidade = ? and fk_lote = ?");
-			st.setInt(1, estoque.getUnidade().getIdUnidade());
-			st.setInt(2, estoque.getLote().getLote());
-			st.setInt(3, estoque.getQuantidade());
-			st.setInt(4, estoque.getUnidade().getIdUnidade());
-			st.setInt(5, estoque.getLote().getLote());
+					" UPDATE estoque "
+					+ " SET quantidade = ? "
+					+ " WHERE fk_idUnidade = ? and fk_lote = ? ");
+			st.setInt(1, estoque.getQuantidade());
+			st.setInt(2, estoque.getUnidade().getIdUnidade());
+			st.setInt(3, estoque.getLote().getLote());
 			st.executeUpdate();
 		}
 		catch(SQLException e) {

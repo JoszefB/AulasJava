@@ -1,6 +1,6 @@
 package model.entities;
 
-
+//centro de distribuição é que nem o highlander só pode haver um
 public class Unidade {
 	
 	private Integer idUnidade;

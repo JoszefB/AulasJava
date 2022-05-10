@@ -14,9 +14,9 @@ public class MovimentoEstoque {
 	private TipoTransacao tipoTransacao;
 	private Integer quantidade;
 	private Date dataMovimentacao;
-	
-	public MovimentoEstoque() {}
 
+	public MovimentoEstoque () {}
+	
 	public MovimentoEstoque(Integer sequencia, Unidade unidade, Lote lote, Pessoa pessoa,
 			TipoTransacao tipoTransacao, Integer quantidade, Date dataMovimentacao) {
 		this.sequencia = sequencia;
@@ -28,7 +28,7 @@ public class MovimentoEstoque {
 		this.dataMovimentacao = dataMovimentacao;
 	}
 
-	public Integer getSequencia() {
+	public int getSequencia() {
 		return sequencia;
 	}
 	

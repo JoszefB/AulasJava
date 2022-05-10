@@ -305,7 +305,7 @@ public class Controller {
 						}
 					}
 					if(l != null) {
-						System.out.println("Informe a quantidade a ser movida: ");
+						System.out.print("Informe a quantidade a ser movida: ");
 						int quantidade =kb.nextInt();
 						if((unidadeDeOrigem.getCentro() == Centro.SIM && unidadeDeDestino.getCentro() == Centro.NAO) || (unidadeDeOrigem.getCentro() == Centro.NAO && unidadeDeDestino.getCentro() == Centro.SIM)) {
 							List<Estoque> estoques = estoque.listAll();
@@ -317,28 +317,42 @@ public class Controller {
 									}
 								}
 							}
-							
-							if(est != null || est.getQuantidade() >= 0) {
-								List<MovimentoEstoque> lista = mestoque.listAll();
-								MovimentoEstoque movimentoDeOrigem = new MovimentoEstoque(1, unidadeDeOrigem, l, null, TipoTransacao.TRA, est.getQuantidade()-quantidade, new Date());
-								MovimentoEstoque movimentoDeDestino = new MovimentoEstoque(1, unidadeDeDestino, l, null, TipoTransacao.REC, quantidade, new Date());
-								for (MovimentoEstoque move : lista) {
-									if(move.getSequencia() == movimentoDeOrigem.getSequencia()) {
-										if(move.getLote().getLote() == movimentoDeOrigem.getLote().getLote()) {
-											if(move.getUnidade().getIdUnidade() == movimentoDeOrigem.getUnidade().getIdUnidade()) {
-												movimentoDeOrigem.setSequencia(movimentoDeOrigem.getSequencia()+1);
+							if(est != null) {
+								if(est.getQuantidade() >= 0 && est.getQuantidade() >= quantidade) {
+									List<MovimentoEstoque> lista = mestoque.listAll();
+									MovimentoEstoque movimentoDeOrigem = new MovimentoEstoque(1, unidadeDeOrigem, l, null, TipoTransacao.TRA, est.getQuantidade()-quantidade, new Date());
+									MovimentoEstoque movimentoDeDestino = new MovimentoEstoque(1, unidadeDeDestino, l, null, TipoTransacao.REC, quantidade, new Date());
+									int sequencia = 1;
+									for (MovimentoEstoque move : lista) {
+										if(move.getSequencia() == 1) {
+											if(move.getLote().getLote() == movimentoDeOrigem.getLote().getLote()) {
+												if(move.getUnidade().getIdUnidade() == movimentoDeOrigem.getUnidade().getIdUnidade()) {
+													sequencia += movimentoDeOrigem.getSequencia();
+												}
 											}
 										}
 									}
-									else if(move.getSequencia() == movimentoDeDestino.getSequencia()) {
-										if(move.getLote().getLote() == movimentoDeDestino.getLote().getLote()) {
-											if(move.getUnidade().getIdUnidade() == movimentoDeDestino.getUnidade().getIdUnidade()) {
-												movimentoDeDestino.setSequencia(movimentoDeDestino.getSequencia()+1);
+									if(sequencia > 1) {
+										movimentoDeOrigem.setSequencia(sequencia);
+									}
+									sequencia = 1;
+									for (MovimentoEstoque move : lista) {
+										if(move.getSequencia() == 1) {
+											if(move.getLote().getLote() == movimentoDeDestino.getLote().getLote()) {
+												if(move.getUnidade().getIdUnidade() == movimentoDeDestino.getUnidade().getIdUnidade()) {
+													sequencia += movimentoDeDestino.getSequencia();
+												}
 											}
 										}
 									}
+									if(sequencia > 1) {
+										movimentoDeDestino.setSequencia(sequencia);
+									}
+									mestoque.transacao(movimentoDeOrigem, movimentoDeDestino);
 								}
-								mestoque.transacao(movimentoDeOrigem, movimentoDeDestino);
+								else {
+									System.out.println("Operação impossivel de ser realizada.");
+								}
 							}
 							else {
 								System.out.println("Operação impossivel de ser realizada.");

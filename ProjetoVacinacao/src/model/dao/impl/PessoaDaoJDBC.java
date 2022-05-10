@@ -115,9 +115,9 @@ public class PessoaDaoJDBC implements PessoaDao{
 		try {
 			st = conn.prepareStatement(
 					"SELECT pessoa.*,endereco.* "+
-					"FROM pessoa INNER JOIN endereco "+
-					"ON pessoa.fk_idEndereco = endereco.idEndereco "+
-					"WHERE pessoa.idPessoa = ?");
+					" FROM pessoa INNER JOIN endereco "+
+					" ON pessoa.fk_idEndereco = endereco.idEndereco "+
+					" WHERE pessoa.idPessoa = ?");
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			
@@ -140,10 +140,9 @@ public class PessoaDaoJDBC implements PessoaDao{
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT pessoa.*,endereco.* "+
-					"FROM pessoa INNER JOIN endereco "+
-					"ON pessoa.fk_idEndereco = endereco.idEndereco "+
-					"WHERE pessoa.cpf = ?");
+					" SELECT pessoa.*,  endereco.* "+
+					" FROM pessoa, endereco "+
+					" WHERE pessoa.fk_idEndereco = endereco.idEndereco AND pessoa.cpf =  ?");
 			st.setString(1, cpf);
 			rs = st.executeQuery();
 			

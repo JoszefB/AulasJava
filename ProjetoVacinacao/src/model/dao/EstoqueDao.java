@@ -10,5 +10,5 @@ public interface EstoqueDao {
 	public List<Estoque> relatorioEstoque(int id);
 	public List<Estoque> listAll();
 	public void update(Estoque estoque);
-	
+
 }

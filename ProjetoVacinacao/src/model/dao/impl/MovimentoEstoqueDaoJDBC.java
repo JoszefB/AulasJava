@@ -90,10 +90,10 @@ public class MovimentoEstoqueDaoJDBC implements MovimentoEstoqueDao{
 		movimento.setPessoa(pessoa);
 		movimento.setUnidade(uni);
 		movimento.setQuantidade(rs.getInt("quantidade"));
-		if(rs.getString("tipo_transacao") == "rec") {
+		if(rs.getString("tipo_transacao").equals("rec")) {
 			movimento.setTipoTransacao(TipoTransacao.REC);
 		}
-		else if(rs.getString("tipo_transacao") == "tra") {
+		else if(rs.getString("tipo_transacao").equals("tra")) {
 			movimento.setTipoTransacao(TipoTransacao.TRA);
 		}
 		else {
@@ -106,16 +106,14 @@ public class MovimentoEstoqueDaoJDBC implements MovimentoEstoqueDao{
 	public void insertMovimentoComPessoa(MovimentoEstoque movimentoEstoque) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("INSERT INTO movimento_estoque"
-					+ "(sequencia, data_movimento, tipo_transacao, quantidade, fk_idUnidade, fk_lote, fk_idPessoa)"
-					+ "VALUES"
-					+"(?, ?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+			st = conn.prepareStatement(
+					"INSERT INTO movimento_estoque "
+					+" (sequencia, data_movimento, tipo_transacao, quantidade, fk_idUnidade, fk_lote, fk_idPessoa) "
+					+" VALUES "
+					+" (?, ?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 			st.setInt(1, movimentoEstoque.getSequencia());
 			st.setDate(2, new java.sql.Date(movimentoEstoque.getDataMovimentacao().getTime()));
-			if(movimentoEstoque.getTipoTransacao() == TipoTransacao.REC)
-				st.setString(3, "rec");
-			else
-				st.setString(3, "tra");
+			st.setString(3, "apl");
 			st.setInt(4, movimentoEstoque.getQuantidade());
 			st.setInt(5, movimentoEstoque.getUnidade().getIdUnidade());
 			st.setInt(6, movimentoEstoque.getLote().getLote());
@@ -137,13 +135,37 @@ public class MovimentoEstoqueDaoJDBC implements MovimentoEstoqueDao{
 	public void insert(MovimentoEstoque movimentoEstoque) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("INSERT INTO movimento_estoque"
-					+ "(sequencia, data_movimento, tipo_transacao, quantidade, fk_idUnidade, fk_lote)"
-					+ "VALUES"
-					+"(?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+			st = conn.prepareStatement("INSERT INTO movimento_estoque "
+					+" (sequencia, data_movimento, tipo_transacao, quantidade, fk_idUnidade, fk_lote) "
+					+" VALUES "
+					+" (?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 			st.setInt(1, movimentoEstoque.getSequencia());
 			st.setDate(2, new java.sql.Date(movimentoEstoque.getDataMovimentacao().getTime()));
-			st.setString(3, "apl");
+			st.setString(3, "rec");
+			st.setInt(4, movimentoEstoque.getQuantidade());
+			st.setInt(5, movimentoEstoque.getUnidade().getIdUnidade());
+			st.setInt(6, movimentoEstoque.getLote().getLote());
+			st.executeUpdate();
+		}
+		catch(SQLException e) {
+			throw new DbException("Unexpected error! No rows affected!");
+		}
+		finally {
+			DB.closeStatement(st);
+		}		
+	}
+	
+	@Override
+	public void insertTransasao(MovimentoEstoque movimentoEstoque) {
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("INSERT INTO movimento_estoque "
+					+" (sequencia, data_movimento, tipo_transacao, quantidade, fk_idUnidade, fk_lote) "
+					+" VALUES "
+					+" (?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+			st.setInt(1, movimentoEstoque.getSequencia());
+			st.setDate(2, new java.sql.Date(movimentoEstoque.getDataMovimentacao().getTime()));
+			st.setString(3, "tra");
 			st.setInt(4, movimentoEstoque.getQuantidade());
 			st.setInt(5, movimentoEstoque.getUnidade().getIdUnidade());
 			st.setInt(6, movimentoEstoque.getLote().getLote());
@@ -166,16 +188,14 @@ public class MovimentoEstoqueDaoJDBC implements MovimentoEstoqueDao{
 			conn.setAutoCommit(false);
 
 			st = conn.createStatement();
-			
-			insert(origem);
+			insertTransasao(origem);
 			EstoqueDao estoque = DaoFactory.createEstoqueDao();
 			Estoque estoqueDeOrigem = new Estoque(origem.getUnidade(), origem.getLote(), origem.getQuantidade());
 			estoque.update(estoqueDeOrigem);
 			
 			insert (destino);
 			Estoque estoqueDeDestino = new Estoque(destino.getUnidade(), destino.getLote(), destino.getQuantidade());
-			estoque.update(estoqueDeDestino);
-			
+			estoque.insert(estoqueDeDestino);
 			conn.commit();
 			
 		}
@@ -199,17 +219,17 @@ public class MovimentoEstoqueDaoJDBC implements MovimentoEstoqueDao{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT *"
-					+ "FROM estoque, lote, unidade, endereco, movimento_estoque, pessoa"
-					+ "WHERE"
-					+ "estoque.fk_lote = lote.lote AND"
-					+ "estoque.fk_idUnidade = unidade.idUnidade AND"
-					+ "endereco.idEndereco = unidade.fk_idEndereco AND"
-					+ "movimento_estoque.fk_idPessoa = pessoa.idPessoa AND"
-					+ "movimento_estoque.fk_idUnidade = unidade.idUnidade AND"
-					+ "movimento_estoque.fk_lote = lote.lote AND"
-					+ "estoque.fk_idUnidade = ? AND"
-					+ "movimento_estoque.tipo_transacao = 'apl';");
+			st = conn.prepareStatement("SELECT * "
+					+ " FROM estoque, lote, unidade, endereco, movimento_estoque, pessoa "
+					+ " WHERE "
+					+ " estoque.fk_lote = lote.lote AND "
+					+ " estoque.fk_idUnidade = unidade.idUnidade AND "
+					+ " endereco.idEndereco = unidade.fk_idEndereco AND "
+					+ " movimento_estoque.fk_idPessoa = pessoa.idPessoa AND "
+					+ " movimento_estoque.fk_idUnidade = unidade.idUnidade AND "
+					+ " movimento_estoque.fk_lote = lote.lote AND "
+					+ " estoque.fk_idUnidade = ? AND "
+					+ " movimento_estoque.tipo_transacao = 'apl'; ");
 			rs = st.executeQuery();
 			
 			List<MovimentoEstoque> movimentoEstoques = new ArrayList<MovimentoEstoque>();
@@ -252,27 +272,26 @@ public class MovimentoEstoqueDaoJDBC implements MovimentoEstoqueDao{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT *"
-					+ "FROM estoque, lote, unidade, endereco, movimento_estoque, pessoa"
-					+ "WHERE"
-					+ "estoque.fk_lote = lote.lote AND"
-					+ "estoque.fk_idUnidade = unidade.idUnidade AND"
-					+ "endereco.idEndereco = unidade.fk_idEndereco AND"
-					+ "movimento_estoque.fk_idPessoa = pessoa.idPessoa AND"
-					+ "movimento_estoque.fk_idUnidade = unidade.idUnidade AND"
-					+ "movimento_estoque.fk_lote = lote.lote;");
+			st = conn.prepareStatement(
+					"SELECT * "
+					+ " FROM estoque, lote, unidade, endereco, movimento_estoque, pessoa "
+					+ " WHERE "
+					+ " estoque.fk_lote = lote.lote AND "
+					+ " estoque.fk_idUnidade = unidade.idUnidade AND "
+					+ " endereco.idEndereco = unidade.fk_idEndereco AND "
+					+ " movimento_estoque.fk_idUnidade = unidade.idUnidade AND "
+					+ " movimento_estoque.fk_lote = lote.lote;");
 			rs = st.executeQuery();
 			
 			List<MovimentoEstoque> movimentoEstoques = new ArrayList<MovimentoEstoque>();
 			
 			while(rs.next()) {
-				Endereco endereco = instantiateEndereco(rs);
-				Lote lote = instantiateLote(rs);
-				Unidade unidade = instantiateUnidade(rs, endereco);
-				Pessoa pessoa = instantiatePessoa(rs, endereco);
-				Estoque estoque = instantiateEstoque(rs, unidade, lote);
-				MovimentoEstoque movimentoEstoque = instantiateMovimentoEstoque(rs, unidade, lote, pessoa, estoque, endereco);
-				movimentoEstoques.add(movimentoEstoque);
+				Lote lot = instantiateLote(rs);
+				Endereco end = instantiateEndereco(rs);
+				Unidade uni = instantiateUnidade(rs, end);
+				Estoque est = instantiateEstoque(rs, uni, lot);
+				MovimentoEstoque mv = instantiateMovimentoEstoque(rs, uni, lot, null, est, end);
+				movimentoEstoques.add(mv);
 			}
 			
 			return movimentoEstoques;
